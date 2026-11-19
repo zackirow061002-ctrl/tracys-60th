@@ -38,7 +38,7 @@ h2:before,h2:after{content:"";flex:1;height:1px;background:rgba(212,175,55,.5)}
 button{font:600 16px "Source Sans 3",sans-serif;background:var(--gold);color:var(--navy);border:0;border-radius:6px;padding:13px 22px;cursor:pointer;min-height:44px}
 button:disabled{opacity:.5;cursor:default}
 .err{color:#ffb4a8;font-size:14px;min-height:20px;margin-top:6px}
-.hero{text-align:center;padding:6px 0 4px}.orn{color:var(--gold);font-size:13px;letter-spacing:.3em;text-transform:uppercase}.big{font:italic 600 clamp(40px,11vw,64px)/1 "Playfair Display",serif;background:linear-gradient(180deg,#f6e27a,#d4af37 50%,#9c7a1e);-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:8px}.sixty{font:700 clamp(84px,24vw,140px)/.9 "Playfair Display",serif;background:linear-gradient(180deg,#fff1a8,#d4af37 45%,#8a6a14);-webkit-background-clip:text;background-clip:text;color:transparent}.sixty span{font-size:.35em;vertical-align:super}.rule{height:1px;width:60%;margin:14px auto 6px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}h1.m{font-size:26px;letter-spacing:.3em;margin-top:10px}.done{display:none;text-align:center;padding:40px 10px}
+.hero{text-align:center;padding:6px 0 4px}.orn{color:var(--gold);font-size:13px;letter-spacing:.3em;text-transform:uppercase}.big{font:italic 600 clamp(40px,11vw,64px)/1 "Playfair Display",serif;background:linear-gradient(180deg,#f6e27a,#d4af37 50%,#9c7a1e);-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:8px}.sixty{font:700 clamp(84px,24vw,140px)/.9 "Playfair Display",serif;background:linear-gradient(180deg,#fff1a8,#d4af37 45%,#8a6a14);-webkit-background-clip:text;background-clip:text;color:transparent}.sixty span{font-size:.35em;vertical-align:super}.rule{height:1px;width:60%;margin:14px auto 6px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}h1.m{font-size:26px;letter-spacing:.3em;margin-top:10px}.btn{display:inline-block;background:var(--gold);color:#0a0a0a;font-weight:700;text-decoration:none;border-radius:6px;padding:15px 26px;font-size:17px}.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold);margin:6px}.addr{color:var(--gold);font-size:18px}.done{display:none;text-align:center;padding:40px 10px}
 .done h1{font-size:38px}
 @media(prefers-reduced-motion:no-preference){.item{transition:background .15s,border-color .15s}}
 </style>
@@ -48,7 +48,7 @@ button:disabled{opacity:.5;cursor:default}
  <form id="f" class="frame" novalidate>
   <div class="hero"><div class="orn">✦ &nbsp;Celebrating&nbsp; ✦</div><div class="big">Tracy's</div><div class="sixty">60<span>th</span></div><div class="rule"></div></div>
   <h1 class="m">MENU</h1>
-  <p class="sub">Add your name, pick your dish and tap Send.</p>
+  <p class="sub">Add your name, pick your dish and tap Send order.</p>
   <label class="f" for="name">Your name</label>
   <input type="text" id="name" autocomplete="name" placeholder="First and last name" required>
   <div id="menu"></div>
@@ -57,15 +57,21 @@ button:disabled{opacity:.5;cursor:default}
   <div class="err" id="err"></div>
  </form>
  <div class="done frame" id="done">
-  <h1>Thank you</h1><p class="sub">See you at Tracy's 60th ✦</p>
+  <h1>Nearly done</h1>
+  <p class="sub">Tap the button to open your email with the order ready, then press <b>Send</b>.</p>
   <p class="sub" id="doneTxt"></p>
-  <button type="button" id="again">Order for someone else</button>
+  <a id="mail" class="btn" href="#">Open email to send</a>
+  <p class="sub" style="margin-top:22px">Email didn't open? Copy your order and email it to<br><b class="addr">acpollins@icloud.com</b></p>
+  <button type="button" id="copy" class="ghost">Copy my order</button>
+  <p class="sub" id="copied" style="min-height:22px"></p>
+  <button type="button" id="again" class="ghost">Order for someone else</button>
  </div>
 </div>
 <div class="bar" id="bar"><div class="in"><div class="sel" id="sel">No dish chosen yet</div><button type="submit" form="f" id="go">Send order</button></div></div>
 <script>
 {
 const EMAIL = "acpollins@icloud.com";
+let body="";
 const FILL = ["Tuna mayo","Baked beans","Grated cheese","Cottage cheese","Broccoli","Chilli con carne"];
 const M = [
  ["Burgers & Mains",[
@@ -141,21 +147,18 @@ f.addEventListener("submit",async e=>{
  if(!name){err.textContent="Please add your name.";document.getElementById("name").focus();return;}
  if(!r){err.textContent="Please choose a dish.";return;}
  const order=describe(), notes=document.getElementById("notes").value.trim();
- go.disabled=true; go.textContent="Sending…";
- try{
-  const res=await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(EMAIL),{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
-   body:JSON.stringify({Name:name,Section:r.dataset.sec,Order:order,Requests:notes||"None",_subject:"Tracy's 60th order: "+name+" – "+r.value,_template:"table",_captcha:"false"})});
-  const j=await res.json().catch(()=>({}));
-  if(!res.ok||j.success===false||j.success==="false") throw new Error(j.message||"Send failed");
-  f.style.display="none"; document.getElementById("bar").style.display="none";
-  document.getElementById("doneTxt").textContent=name+", your order is in: "+order+".";
-  document.getElementById("done").style.display="block"; window.scrollTo(0,0);
- }catch(x){
-  const body="Name: "+name+"\nOrder: "+order+"\nRequests: "+(notes||"None");
-  const href="mailto:"+EMAIL+"?subject="+encodeURIComponent("Tracy's 60th order: "+name+" – "+r.value)+"&body="+encodeURIComponent(body);
-  err.innerHTML="That didn't go through automatically. <a href=\""+href+"\" style=\"color:#d4af37;font-weight:600\">Tap here to send it by email instead</a> (opens your mail app, ready to send to "+esc(EMAIL)+").";
- }
- go.disabled=false; go.textContent="Send order";
+ body="Name: "+name+"\nOrder: "+order+"\nRequests: "+(notes||"None");
+ document.getElementById("mail").href="mailto:"+EMAIL+"?subject="+encodeURIComponent("Tracy's 60th order: "+name+" – "+r.value)+"&body="+encodeURIComponent(body);
+ document.getElementById("copied").textContent="";
+ f.style.display="none"; document.getElementById("bar").style.display="none";
+ document.getElementById("doneTxt").textContent=name+": "+order+(notes?" ("+notes+")":"");
+ document.getElementById("done").style.display="block"; window.scrollTo(0,0);
+ try{window.location.href=document.getElementById("mail").href;}catch(x){}
+});
+document.getElementById("copy").addEventListener("click",async()=>{
+ const c=document.getElementById("copied");
+ try{await navigator.clipboard.writeText(body);c.textContent="Copied. Paste it into an email to acpollins@icloud.com.";}
+ catch(x){c.textContent="Couldn't copy. Please type it into an email instead.";}
 });
 document.getElementById("again").addEventListener("click",()=>{
  f.reset(); f.querySelectorAll(".chip.on").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-checked","false")});
