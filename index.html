@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracy's 60th</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a0a0a;--navy2:#151515;--gold:#d4af37;--ink:#f5efdc;--mute:#bdb39a}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#1c170a 0%,#0a0a0a 55%) fixed,#0a0a0a;color:var(--ink);font:16px/1.5 "Source Sans 3",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:28px 18px 120px}
+.frame{border:1px solid var(--gold);padding:22px 18px;position:relative}
+.frame:before{content:"";position:absolute;inset:5px;border:1px solid rgba(212,175,55,.35);pointer-events:none}
+h1{font:700 clamp(34px,8vw,48px)/1.05 "Playfair Display",serif;color:var(--gold);text-align:center;margin:4px 0 6px;letter-spacing:.04em}
+.sub{text-align:center;color:var(--mute);margin:0 0 20px}
+label.f{display:block;font-weight:600;margin:0 0 6px;color:var(--gold)}
+input[type=text],textarea,select{width:100%;font:16px "Source Sans 3",sans-serif;padding:12px;border-radius:6px;border:1px solid rgba(212,175,55,.5);background:#0f0f0f;color:var(--ink)}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+h2{font:600 20px "Playfair Display",serif;color:var(--gold);text-align:center;margin:28px 0 10px;display:flex;align-items:center;gap:10px}
+h2:before,h2:after{content:"";flex:1;height:1px;background:rgba(212,175,55,.5)}
+.item{display:block;border:1px solid rgba(212,175,55,.25);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;background:var(--navy2)}
+.item input{position:absolute;opacity:0}
+.item .n{font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:15px}
+.item .d{color:var(--mute);font-size:14px}
+.item.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:#2a220e}
+.opts{display:none;margin-top:10px;gap:8px;flex-wrap:wrap}
+.item.on .opts{display:flex}
+.opts select{width:auto;flex:1 1 160px;padding:9px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+.chip{border:1px solid rgba(212,175,55,.5);border-radius:99px;padding:6px 12px;font-size:14px;cursor:pointer;user-select:none}
+.chip.on{background:var(--gold);color:var(--navy);font-weight:600}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(10,10,10,.97);border-top:1px solid var(--gold);padding:12px 18px}
+.bar .in{max-width:720px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.sel{flex:1;font-size:14px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sel b{color:var(--ink)}
+button{font:600 16px "Source Sans 3",sans-serif;background:var(--gold);color:var(--navy);border:0;border-radius:6px;padding:13px 22px;cursor:pointer;min-height:44px}
+button:disabled{opacity:.5;cursor:default}
+.err{color:#ffb4a8;font-size:14px;min-height:20px;margin-top:6px}
+.hero{text-align:center;padding:6px 0 4px}.orn{color:var(--gold);font-size:13px;letter-spacing:.3em;text-transform:uppercase}.big{font:italic 600 clamp(40px,11vw,64px)/1 "Playfair Display",serif;background:linear-gradient(180deg,#f6e27a,#d4af37 50%,#9c7a1e);-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:8px}.sixty{font:700 clamp(84px,24vw,140px)/.9 "Playfair Display",serif;background:linear-gradient(180deg,#fff1a8,#d4af37 45%,#8a6a14);-webkit-background-clip:text;background-clip:text;color:transparent}.sixty span{font-size:.35em;vertical-align:super}.rule{height:1px;width:60%;margin:14px auto 6px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}h1.m{font-size:26px;letter-spacing:.3em;margin-top:10px}.done{display:none;text-align:center;padding:40px 10px}
+.done h1{font-size:38px}
+@media(prefers-reduced-motion:no-preference){.item{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <form id="f" class="frame" novalidate>
+  <div class="hero"><div class="orn">✦ &nbsp;Celebrating&nbsp; ✦</div><div class="big">Tracy's</div><div class="sixty">60<span>th</span></div><div class="rule"></div></div>
+  <h1 class="m">MENU</h1>
+  <p class="sub">Add your name, pick your dish and tap Send.</p>
+  <label class="f" for="name">Your name</label>
+  <input type="text" id="name" autocomplete="name" placeholder="First and last name" required>
+  <div id="menu"></div>
+  <label class="f" for="notes" style="margin-top:26px">Allergies or requests (optional)</label>
+  <textarea id="notes" rows="3" placeholder="e.g. no onions, gluten free, sweet potato fries"></textarea>
+  <div class="err" id="err"></div>
+ </form>
+ <div class="done frame" id="done">
+  <h1>Thank you</h1><p class="sub">See you at Tracy's 60th ✦</p>
+  <p class="sub" id="doneTxt"></p>
+  <button type="button" id="again">Order for someone else</button>
+ </div>
+</div>
+<div class="bar" id="bar"><div class="in"><div class="sel" id="sel">No dish chosen yet</div><button type="submit" form="f" id="go">Send order</button></div></div>
+<script>
+{
+const EMAIL = "acpollins@icloud.com";
+const FILL = ["Tuna mayo","Baked beans","Grated cheese","Cottage cheese","Broccoli","Chilli con carne"];
+const M = [
+ ["Burgers & Mains",[
+  ["Steakhouse Burger","Beef steak patty, American cheese, lettuce, tomato, brioche bun, fries",[["Fried egg","No fried egg","Add a fried egg"]]],
+  ["Schnitzel Burger","Chicken schnitzel, cheese, lettuce, mayo, brioche bun, fries",[["Fried egg","No fried egg","Add a fried egg"]]],
+  ["Spaghetti Bolognese","Chef's bolognese, parmesan, garlic bread"],
+  ["Wild Mushroom Tagliatelle","Creamy garlic sauce, parmesan crisp"],
+  ["Katsu Curry","Crispy breaded chicken or fish, rich mild Japanese curry sauce, fluffy steamed rice",[["Katsu","Chicken","Fish"]]],
+  ["Cod Goujons","Lightly battered cod goujons, chunky chips, tartare sauce"],
+  ["Beef Hotdog","Beef hotdog, toasted bun, skinny fries, mustard, tomato sauce, crispy onions"],
+  ["Wurst or Sausage, Eggs & Chips","Wurst or beef sausage, eggs, skinny fries or chunky chips",[["Sausage","Wurst","Beef sausage"],["Side","Skinny fries","Chunky chips"]]],
+  ["Fillet of Sea Bass","Crushed new potatoes, mixed green beans, hollandaise"]]],
+ ["Jackets",[
+  ["Jacket Potato","Freshly baked, served with a side salad. Pick up to three fillings","FILL"]]],
+ ["Salad Bar",[
+  ["Chicken Schnitzel Caesar","Chicken schnitzel, baby gem, croutons, parmesan, caesar dressing"],
+  ["Tuna Nicoise","Flaked tuna, hard boiled egg, baby new potatoes, green beans, olives, lettuce"],
+  ["Salmon & Avocado Salad","Smoked salmon, avocado, mixed leaves, tomato, cucumber, pomegranate, balsamic dressing"]]],
+ ["Wraps",[
+  ["Lamb Shawarma","Lamb shawarma wrap, salad, spicy mayo, cheese sauce"],
+  ["Chicken Shawarma","Chicken shawarma wrap, salad, spicy mayo, cheese sauce"]]],
+ ["Sandwiches",[
+  ["Dyrham Club","Chicken schnitzel, turkey rashers, lettuce, tomato, mayo"],
+  ["Smoked Salmon & Cream Cheese","Scottish smoked salmon and cream cheese"],
+  ["Tuna Crunch","Tuna mayo, cucumber, red onion, lettuce"],
+  ["Cheese & Tomato Sandwich","Mature cheddar and sliced tomato"],
+  ["Egg Mayo","Free range eggs, mayo, watercress"],
+  ["Avocado Salad Sandwich","Avocado, lettuce, tomato, mayo"]]],
+ ["Open Sandwiches",[
+  ["Avocado & Poached Eggs","Smashed avocado, poached eggs, toasted sourdough"],
+  ["Smoked Salmon & Avocado","Scottish smoked salmon, smashed avocado, cream cheese, toasted sourdough"]]],
+ ["Toasties",[
+  ["Cheese & Tomato Toastie",""],
+  ["Cheese & Onion Toastie",""],
+  ["Tuna & Cheese Toastie",""],
+  ["Welsh Rarebit","Cheese and mustard blend on white, brown or sourdough",[["Bread","White","Brown","Sourdough"],["Eggs","No eggs","Add two poached eggs"]]]]]
+];
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let id=0;
+document.getElementById("menu").innerHTML=M.map(([sec,items])=>`<h2>${esc(sec)}</h2>`+items.map(([n,d,o])=>{
+ const k="i"+(id++);
+ let opts="";
+ if(o==="FILL") opts=`<div class="opts"><div class="chips">${FILL.map(x=>`<span class="chip" data-fill="${esc(x)}" role="checkbox" aria-checked="false" tabindex="0">${esc(x)}</span>`).join("")}</div></div>`;
+ else if(o) opts=`<div class="opts">${o.map(([lab,...v])=>`<select aria-label="${esc(lab)}" data-lab="${esc(lab)}">${v.map(x=>`<option>${esc(x)}</option>`).join("")}</select>`).join("")}</div>`;
+ return `<label class="item" for="${k}"><input type="radio" name="dish" id="${k}" value="${esc(n)}" data-sec="${esc(sec)}"><div class="n">${esc(n)}</div>${d?`<div class="d">${esc(d)}</div>`:""}${opts}</label>`;
+}).join("")).join("");
+const f=document.getElementById("f"),sel=document.getElementById("sel"),err=document.getElementById("err"),go=document.getElementById("go");
+const cur=()=>f.querySelector("input[name=dish]:checked");
+const describe=()=>{
+ const r=cur(); if(!r) return "";
+ const box=r.closest(".item"); let parts=[];
+ box.querySelectorAll("select").forEach(s=>parts.push(s.value));
+ const fills=[...box.querySelectorAll(".chip.on")].map(c=>c.dataset.fill);
+ if(box.querySelector(".chip")) parts.push(fills.length?fills.join(", "):"no fillings chosen");
+ return r.value+(parts.length?" ("+parts.join(", ")+")":"");
+};
+const paint=()=>{
+ f.querySelectorAll(".item").forEach(l=>l.classList.toggle("on",l.querySelector("input").checked));
+ const d=describe(); sel.innerHTML=d?"<b>"+esc(d)+"</b>":"No dish chosen yet";
+};
+f.addEventListener("change",paint);
+f.addEventListener("click",e=>{
+ const c=e.target.closest(".chip"); if(!c) return;
+ e.preventDefault();
+ const on=c.closest(".chips").querySelectorAll(".chip.on").length;
+ if(!c.classList.contains("on")&&on>=3){err.textContent="Jackets take up to three fillings.";return;}
+ err.textContent=""; c.classList.toggle("on"); c.setAttribute("aria-checked",c.classList.contains("on")); paint();
+});
+f.addEventListener("keydown",e=>{if(e.target.classList.contains("chip")&&(e.key===" "||e.key==="Enter")){e.preventDefault();e.target.click();}});
+f.addEventListener("submit",async e=>{
+ e.preventDefault(); err.textContent="";
+ const name=document.getElementById("name").value.trim(), r=cur();
+ if(!name){err.textContent="Please add your name.";document.getElementById("name").focus();return;}
+ if(!r){err.textContent="Please choose a dish.";return;}
+ const order=describe(), notes=document.getElementById("notes").value.trim();
+ go.disabled=true; go.textContent="Sending…";
+ try{
+  const res=await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(EMAIL),{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
+   body:JSON.stringify({Name:name,Section:r.dataset.sec,Order:order,Requests:notes||"None",_subject:"Tracy's 60th order: "+name+" – "+r.value,_template:"table",_captcha:"false"})});
+  const j=await res.json().catch(()=>({}));
+  if(!res.ok||j.success===false||j.success==="false") throw new Error(j.message||"Send failed");
+  f.style.display="none"; document.getElementById("bar").style.display="none";
+  document.getElementById("doneTxt").textContent=name+", your order is in: "+order+".";
+  document.getElementById("done").style.display="block"; window.scrollTo(0,0);
+ }catch(x){
+  const body="Name: "+name+"\nOrder: "+order+"\nRequests: "+(notes||"None");
+  const href="mailto:"+EMAIL+"?subject="+encodeURIComponent("Tracy's 60th order: "+name+" – "+r.value)+"&body="+encodeURIComponent(body);
+  err.innerHTML="That didn't go through automatically. <a href=\""+href+"\" style=\"color:#d4af37;font-weight:600\">Tap here to send it by email instead</a> (opens your mail app, ready to send to "+esc(EMAIL)+").";
+ }
+ go.disabled=false; go.textContent="Send order";
+});
+document.getElementById("again").addEventListener("click",()=>{
+ f.reset(); f.querySelectorAll(".chip.on").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-checked","false")});
+ paint(); document.getElementById("done").style.display="none"; f.style.display="block"; document.getElementById("bar").style.display="block"; window.scrollTo(0,0);
+});
+}
+</script>
+</body>
+</html>
